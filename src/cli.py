@@ -1,9 +1,9 @@
 import click
+import subprocess
 from src.config import Config
-from subprocess import Popen, call
 
 
-pass_config = click.make_pass_decorator(Config)
+pass_config = click.make_pass_decorator(Config, ensure=True)
 
 def pr_mmetering_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
@@ -21,22 +21,23 @@ def main():
 @click.pass_context
 def setup(ctx):
     base_dir = click.prompt('Enter the absolute installation path to mmetering-server.', str)
-    if click.confirm('Use mmetering-cli config file location: (~/.mmetering-cli)'):
-        config_loc = '~/.mmetering-cli'
-    else:
-        config_loc = click.prompt('Enter new path for config file')
     
-    # Init the config file
-    ctx.obj = Config(config_loc)
+    ctx.obj = Config()
     ctx.obj.set_base_dir(base_dir)
 
+    click.echo('You\'re ready to go now!')
 
 
 @main.command()
 @pass_config
 def sync(config):
     """Makes migrations and migrates changes"""
-    click.echo("Starting Migration...")
+    base_dir = config.get_base_dir()
+
+    if base_dir is not None:
+        click.echo("Starting Migration in %s" % base_dir)
+        subprocess.Popen('python3 manage.py makemigrations', cwd=base_dir, 
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 @main.command()
 def status():
