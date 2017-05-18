@@ -1,6 +1,9 @@
-from subprocess import Popen, call
 import click
+from src.config import Config
+from subprocess import Popen, call
 
+
+pass_config = click.make_pass_decorator(Config)
 
 def pr_mmetering_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
@@ -15,24 +18,31 @@ def main():
     nothing = None
 
 @main.command()
-def setup():
+@click.pass_context
+def setup(ctx):
     base_dir = click.prompt('Enter the absolute installation path to mmetering-server.', str)
     if click.confirm('Use mmetering-cli config file location: (~/.mmetering-cli)'):
         config_loc = '~/.mmetering-cli'
     else:
         config_loc = click.prompt('Enter new path for config file')
+    
+    # Init the config file
+    ctx.obj = Config(config_loc)
+    ctx.obj.set_base_dir(base_dir)
+
+
 
 @main.command()
-def check():
+@pass_config
+def sync(config):
+    """Makes migrations and migrates changes"""
+    click.echo("Starting Migration...")
+
+@main.command()
+def status():
     click.echo("Checking redis...")
     click.echo("Checking celery workers and beat...")
     click.echo("Checking modwsgi...")
-
-@main.command()
-def sync(name):
-    """Makes migrations and migrates changes"""
-    click.echo("Starting Migration...")
-    call()
 
 @main.command()
 @click.option('-w', '--webserver', default=True)
