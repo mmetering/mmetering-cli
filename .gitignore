@@ -4,6 +4,7 @@ ENV/
 
 *.sw[a-z]
 *.py[cox]
+*.egg-info/
 
 .coverage
 
