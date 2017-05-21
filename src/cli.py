@@ -15,12 +15,14 @@ def pr_mmetering_version(ctx, param, value):
 @click.group()
 @click.version_option(help='Show mmetering-cli version')
 def main():
-    """mmetering-cli"""
+    """mmetering-cli - CLI tool used for shortening long commands"""
     nothing = None
 
 @main.command()
 @click.pass_context
 def setup(ctx):
+    """Setup where your mmetering_server installation and it's virtualenvironment lives"""
+
     base_dir = click.prompt('Enter the absolute installation path to mmetering-server.', str)
     venv = click.prompt('Enter the path to your virtual environment activation script', str)
     
@@ -35,6 +37,7 @@ def setup(ctx):
 @pass_config
 def test(config, app):
     """Executes test for the whole project or specific apps"""
+
     base_dir = config.get('mmetering', 'base_dir')
     venv = config.get('mmetering', 'venv')
     
@@ -55,6 +58,7 @@ def test(config, app):
 @pass_config
 def migrate(config):
     """Makes migrations and migrates changes"""
+
     base_dir = config.get('mmetering', 'base_dir')
     venv = config.get('mmetering', 'venv')
 
@@ -71,6 +75,8 @@ def migrate(config):
 
 @main.command()
 def status():
+    """Checks status of redis, celery and apache"""
+
     click.secho('Checking redis...', bold=True)
     pipe = subprocess.Popen(['redis-cli', 'ping'], stdout=subprocess.PIPE)
     output = [line.replace('\n', '') for line in pipe.stdout]
@@ -105,8 +111,7 @@ def status():
 @click.option('-r', '--redis', default=True)
 def restart(webserver, celery, redis):
     """
-    TODO: Implement
-    Restarts all services
+    Restarts all services (TODO: Implement)
     """
     nothing = None
 
@@ -114,6 +119,8 @@ def restart(webserver, celery, redis):
 @click.option('--version', expose_value=True, is_flag=True, is_eager=True, help='Show mmetering version')
 @pass_config
 def mmetering(config, version):
+    """Check the version (--version)"""
+
     base_dir = config.get('mmetering', 'base_dir')
     venv = config.get('mmetering', 'venv')
 
