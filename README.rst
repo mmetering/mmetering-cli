@@ -12,24 +12,21 @@ This is a simple CLI tool used for shortening long commands around `mmetering-se
 Install
 -------
 
-Make sure you have at least Python 2.7 installed. To install the application for all users, run
+Make sure you have at least Python 2.7 installed. To install the application for all users, run::
 
-.. code:: bash
-$ sudo ./setup.py install
+  $ sudo ./setup.py install
 
 
 This requires setuptools to be available. The setup script will automatically install all prerequisites and add 
 the mmetering-cli executable to $PATH.
 
-Then you can simply do
+Then you can simply do::
 
-.. code:: bash
-$ mmetering-cli <operation>
+  $ mmetering-cli <operation>
 
 Usage
 _____
 
-.. code:: bash
 Usage: mmetering-cli [OPTIONS] COMMAND [ARGS]...
 
   mmetering-cli - CLI tool used for shortening long commands
