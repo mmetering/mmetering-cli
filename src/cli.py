@@ -1,6 +1,7 @@
 import click
 import subprocess
 from src.config import Config
+from src.shell import Shell
 
 
 pass_config = click.make_pass_decorator(Config, ensure=True)
@@ -21,23 +22,30 @@ def main():
 @click.pass_context
 def setup(ctx):
     base_dir = click.prompt('Enter the absolute installation path to mmetering-server.', str)
+    venv = click.prompt('Enter the path to your virtual environment activation script', str)
     
     ctx.obj = Config()
-    ctx.obj.set_base_dir(base_dir)
+    ctx.obj.set('mmetering', 'base_dir', base_dir)
+    ctx.obj.set('mmetering', 'venv', venv)
 
     click.echo('You\'re ready to go now!')
 
-
 @main.command()
 @pass_config
-def sync(config):
+def migrate(config):
     """Makes migrations and migrates changes"""
-    base_dir = config.get_base_dir()
+    base_dir = config.get('mmetering', 'base_dir')
+    venv = config.get('mmetering', 'venv')
 
-    if base_dir is not None:
+    if base_dir and venv is not None:
         click.echo("Starting Migration in %s" % base_dir)
-        subprocess.Popen('python3 manage.py makemigrations', cwd=base_dir, 
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        shell = Shell(venv, base_dir)
+        output = shell.execute(['python3', 'manage.py', 'makemigrations'])
+        
+        for line in output:
+            print line.replace('\n', '')
+
+        output = shell.execute(['python3', 'manage.py', 'migrate'])
 
 @main.command()
 def status():
