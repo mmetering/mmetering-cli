@@ -71,9 +71,33 @@ def migrate(config):
 
 @main.command()
 def status():
-    click.echo("Checking redis...")
-    click.echo("Checking celery workers and beat...")
-    click.echo("Checking modwsgi...")
+    click.secho('Checking redis...', bold=True)
+    pipe = subprocess.Popen(['redis-cli', 'ping'], stdout=subprocess.PIPE)
+    output = [line.replace('\n', '') for line in pipe.stdout]
+    if output is [] and output[0] == 'PONG':
+        click.secho('\tredis-server is running properly', fg='green')
+    else:
+        click.secho('\tredis-server is not working properly', fg='red')
+
+
+    click.secho('Checking celery workers and beat...', bold=True)
+    worker = subprocess.Popen(['sudo', '/usr/bin/supervisorctl', 'status', 'mmeteringcelery'], 
+            stdout=subprocess.PIPE)
+    printout(worker.stdout, char='\t')
+
+    beat = subprocess.Popen(['sudo', '/usr/bin/supervisorctl', 'status', 'mmeteringcelerybeat'], 
+            stdout=subprocess.PIPE)
+    printout(beat.stdout, char='\t')
+
+
+    click.secho('Checking the webserver...', bold=True)
+    try:
+        apache2 = subprocess.Popen(['/etc/init.d/apache2', 'status'], stdout=subprocess.PIPE)
+        printout(apache2.stdout, char='\t')
+    except OSError:
+        click.secho('\tApache2 is not running or not available under /etc/init.d/apache2', fg='red')
+        click.secho('\tCheck installation path under your system', fg='red')
+
 
 @main.command()
 @click.option('-w', '--webserver', default=True)
@@ -89,7 +113,7 @@ def restart(webserver, celery, redis):
 def mmetering():
     nothing = None
 
-def printout(output_file):
+def printout(output_file, *args, **kwargs):
     for line in output_file:
-        click.echo(line.replace('\n', ''))
+        click.echo(kwargs.get('char', '') + line.replace('\n', ''))
 
