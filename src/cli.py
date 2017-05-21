@@ -31,6 +31,27 @@ def setup(ctx):
     click.echo('You\'re ready to go now!')
 
 @main.command()
+@click.option('-a', '--app', help='Test specific app')
+@pass_config
+def test(config, app):
+    """Executes test for the whole project or specific apps"""
+    base_dir = config.get('mmetering', 'base_dir')
+    venv = config.get('mmetering', 'venv')
+    
+    if base_dir and venv is not None:
+        shell = Shell(venv, base_dir)
+
+        if app is not None:
+            click.echo('Executing tests for %s' % app)
+            output = shell.execute(['python3', 'manage.py', 'test', app])
+        else:
+            click.echo('Executing tests for the whole project')
+            output = shell.execute(['python3', 'manage.py', 'test'])
+
+        printout(output)
+
+
+@main.command()
 @pass_config
 def migrate(config):
     """Makes migrations and migrates changes"""
@@ -38,14 +59,15 @@ def migrate(config):
     venv = config.get('mmetering', 'venv')
 
     if base_dir and venv is not None:
-        click.echo("Starting Migration in %s" % base_dir)
+        click.echo('Starting Migration in %s' % base_dir)
         shell = Shell(venv, base_dir)
         output = shell.execute(['python3', 'manage.py', 'makemigrations'])
         
-        for line in output:
-            print line.replace('\n', '')
-
+        printout(output)
+        
         output = shell.execute(['python3', 'manage.py', 'migrate'])
+        printout(output)
+
 
 @main.command()
 def status():
@@ -66,4 +88,8 @@ def restart(webserver, celery, redis):
         expose_value=False, is_eager=True, help='Show mmetering version')
 def mmetering():
     nothing = None
+
+def printout(output_file):
+    for line in output_file:
+        click.echo(line.replace('\n', ''))
 
