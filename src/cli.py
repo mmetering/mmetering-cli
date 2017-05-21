@@ -104,14 +104,23 @@ def status():
 @click.option('-c', '--celery', default=True)
 @click.option('-r', '--redis', default=True)
 def restart(webserver, celery, redis):
-    """Restarts all services"""
+    """
+    TODO: Implement
+    Restarts all services
+    """
     nothing = None
 
 @main.command()
-@click.option('--version', is_flag=True, callback=pr_mmetering_version, 
-        expose_value=False, is_eager=True, help='Show mmetering version')
-def mmetering():
-    nothing = None
+@click.option('--version', expose_value=True, is_flag=True, is_eager=True, help='Show mmetering version')
+@pass_config
+def mmetering(config, version):
+    base_dir = config.get('mmetering', 'base_dir')
+    venv = config.get('mmetering', 'venv')
+
+    if base_dir and venv is not None:
+        shell = Shell(venv, base_dir)
+        output = shell.execute(['git', 'describe', '--tags'])
+        printout(output, char='mmetering-server')
 
 def printout(output_file, *args, **kwargs):
     for line in output_file:
