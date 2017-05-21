@@ -23,7 +23,7 @@ class PyTest(TestCommand):
 
 setup(
     name="mmetering-cli",
-    version='0.1.0',
+    version='0.1.2',
     description="Command line interface for MMetering",
     long_description="\n\n".join([open("README.rst").read()]),
     license='MIT',
