@@ -27,21 +27,23 @@ Then you can simply do::
 Usage
 _____
 
-Usage: mmetering-cli [OPTIONS] COMMAND [ARGS]...
+::
 
-  mmetering-cli - CLI tool used for shortening long commands
+  Usage: mmetering-cli [OPTIONS] COMMAND [ARGS]...
 
-Options:
-  --version  Show mmetering-cli version
-  --help     Show this message and exit.
+    mmetering-cli - CLI tool used for shortening long commands
 
-Commands:
-  migrate    Makes migrations and migrates changes
-  mmetering  Check the version (--version)
-  restart    Restarts all services (TODO: Implement)
-  setup      Setup where your mmetering_server...
-  status     Checks status of redis, celery and apache
-  test       Executes test for the whole project or an app
+  Options:
+    --version  Show mmetering-cli version
+    --help     Show this message and exit.
+
+  Commands:
+    migrate    Makes migrations and migrates changes
+    mmetering  Check the version (--version)
+    restart    Restarts all services (TODO: Implement)
+    setup      Setup where your mmetering_server...
+    status     Checks status of redis, celery and apache
+    test       Executes test for the whole project or an app
 
 
 License
