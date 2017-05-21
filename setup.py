@@ -40,7 +40,6 @@ setup(
         'Intended Audience :: Developers',
         'Framework :: Django :: 1.10',
         'Environment :: Console',
-        'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython'],
     extras_require={'test': tests_require},
