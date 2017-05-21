@@ -24,8 +24,9 @@ Then you can simply do::
 
   $ mmetering-cli <operation>
 
+
 Usage
-_____
+-----
 
 ::
 
