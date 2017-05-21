@@ -23,19 +23,18 @@ class Config(object):
         with open(self.configfile, 'wb') as configfile:
             self.config.write(configfile)
 
-    def get_base_dir(self):
+    def set(self, section, name, value):
+        val = os.path.expanduser(value)
+
+        self.read()
+        self.config.set(section, name, val)
+        self.write()
+
+    def get(self, section, name):
         self.read()
         try:
-            return self.config.get('mmetering', 'base_dir')
+            return self.config.get(section, name)
         except configparser.NoOptionError:
-            print 'No base_dir specified in %s' % self.configfile
-            print 'Use mmetering-cli setup'
-
-    def set_base_dir(self, path):
-        base_dir = os.path.expanduser(path)
-
-        self.read()
-        self.config.set('mmetering', 'base_dir', base_dir)
-
-        self.write()
+            print 'No %s specified in %s' % (name, self.configfile)
+            print 'Try \'mmetering-cli setup\''
 
