@@ -6,12 +6,6 @@ from src.shell import Shell
 
 pass_config = click.make_pass_decorator(Config, ensure=True)
 
-def pr_mmetering_version(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    click.echo("v1.1.0")
-    ctx.exit()
-
 @click.group()
 @click.version_option(help='Show mmetering-cli version')
 def main():
@@ -80,7 +74,7 @@ def status():
     click.secho('Checking redis...', bold=True)
     pipe = subprocess.Popen(['redis-cli', 'ping'], stdout=subprocess.PIPE)
     output = [line.replace('\n', '') for line in pipe.stdout]
-    if output is [] and output[0] == 'PONG':
+    if output and output[0] == 'PONG':
         click.secho('\tredis-server is running properly', fg='green')
     else:
         click.secho('\tredis-server is not working properly', fg='red')

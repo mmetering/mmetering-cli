@@ -14,7 +14,7 @@ Install
 
 Make sure you have at least Python 2.7 installed. To install the application for all users, run::
 
-  $ sudo ./setup.py install
+  $ python2 setup.py install
 
 
 This requires setuptools to be available. The setup script will automatically install all prerequisites and add 
