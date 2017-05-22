@@ -68,7 +68,8 @@ def migrate(config):
 
 
 @main.command()
-def status():
+@click.option('-m', '--memory', help='Show redis memory usage', default=False, is_flag=True)
+def status(memory):
     """Checks status of redis, celery and apache"""
 
     click.secho('Checking redis...', bold=True)
@@ -78,6 +79,11 @@ def status():
         click.secho('\tredis-server is running properly', fg='green')
     else:
         click.secho('\tredis-server is not working properly', fg='red')
+
+    if memory:
+        click.secho('Checking redis memory usage...', bold=True)
+        pipe = subprocess.Popen(['redis-cli', 'info', 'memory'], stdout=subprocess.PIPE)
+        printout(pipe.stdout, char='\t')
 
 
     click.secho('Checking celery workers and beat...', bold=True)
