@@ -106,9 +106,9 @@ def status(memory):
 
 
 @main.command()
-@click.option('-w', '--webserver', default=True, is_flag=True)
-@click.option('-c', '--celery', default=True, is_flag=True)
-@click.option('-r', '--redis', default=True, is_flag=True)
+@click.option('-w', '--webserver', is_flag=True)
+@click.option('-c', '--celery', is_flag=True)
+@click.option('-r', '--redis', is_flag=True)
 def restart(webserver, celery, redis):
     """
     Restarts specific services
