@@ -19,7 +19,7 @@ def setup(ctx):
 
     base_dir = click.prompt('Enter the absolute installation path to mmetering-server.', str)
     venv = click.prompt('Enter the path to your virtual environment activation script', str)
-    
+
     ctx.obj = Config()
     ctx.obj.set('mmetering', 'base_dir', base_dir)
     ctx.obj.set('mmetering', 'venv', venv)
@@ -34,7 +34,7 @@ def test(config, app):
 
     base_dir = config.get('mmetering', 'base_dir')
     venv = config.get('mmetering', 'venv')
-    
+
     if base_dir and venv is not None:
         shell = Shell(venv, base_dir)
 
@@ -60,9 +60,9 @@ def migrate(config):
         click.echo('Starting Migration in %s' % base_dir)
         shell = Shell(venv, base_dir)
         output = shell.execute(['python3', 'manage.py', 'makemigrations'])
-        
+
         printout(output)
-        
+
         output = shell.execute(['python3', 'manage.py', 'migrate'])
         printout(output)
 
@@ -87,11 +87,11 @@ def status(memory):
 
 
     click.secho('Checking celery workers and beat...', bold=True)
-    worker = subprocess.Popen(['sudo', '/usr/bin/supervisorctl', 'status', 'mmeteringcelery'], 
+    worker = subprocess.Popen(['sudo', '/usr/bin/supervisorctl', 'status', 'mmeteringcelery'],
             stdout=subprocess.PIPE)
     printout(worker.stdout, char='\t')
 
-    beat = subprocess.Popen(['sudo', '/usr/bin/supervisorctl', 'status', 'mmeteringcelerybeat'], 
+    beat = subprocess.Popen(['sudo', '/usr/bin/supervisorctl', 'status', 'mmeteringcelerybeat'],
             stdout=subprocess.PIPE)
     printout(beat.stdout, char='\t')
 
@@ -106,14 +106,46 @@ def status(memory):
 
 
 @main.command()
-@click.option('-w', '--webserver', default=True)
-@click.option('-c', '--celery', default=True)
-@click.option('-r', '--redis', default=True)
+@click.option('-w', '--webserver', is_flag=True)
+@click.option('-c', '--celery', is_flag=True)
+@click.option('-r', '--redis', is_flag=True)
 def restart(webserver, celery, redis):
     """
-    Restarts all services (TODO: Implement)
+    Restarts specific services
     """
-    nothing = None
+    def restart_web():
+        click.secho('Restarting Webserver...', bold=True)
+        try:
+            apache2 = subprocess.Popen(['sudo', '/etc/init.d/apache2', 'restart'], stdout=subprocess.PIPE)
+            printout(apache2.stdout, char='\t')
+        except OSError:
+            click.secho('\tApache2 is not running or not available under /etc/init.d/apache2', fg='red')
+            click.secho('\tCheck installation path under your system', fg='red')
+
+    def restart_celery():
+        click.secho('Restarting Celery workers and beat...', bold=True)
+        worker = subprocess.Popen(['sudo', '/usr/bin/supervisorctl', 'restart', 'mmeteringcelery'],
+                stdout=subprocess.PIPE)
+        printout(worker.stdout, char='\t')
+
+        beat = subprocess.Popen(['sudo', '/usr/bin/supervisorctl', 'restart', 'mmeteringcelerybeat'],
+                stdout=subprocess.PIPE)
+        printout(beat.stdout, char='\t')
+
+    def restart_redis():
+        click.secho('Restarting Redis...', bold=True)
+        redis = subprocess.Popen(['sudo', 'service', 'redis', 'restart'], stdout=subprocess.PIPE)
+        printout(redis.stdout, char='\t')
+
+    if webserver:
+        restart_web()
+    elif celery:
+        restart_celery()
+    elif redis:
+        restart_redis()
+    else:
+        restart_web()
+        restart_celery()
 
 @main.command()
 @click.option('--version', expose_value=True, is_flag=True, is_eager=True, help='Show mmetering version')
