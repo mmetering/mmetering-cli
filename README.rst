@@ -2,8 +2,8 @@ mmetering-cli
 #############################
 
 
-.. image:: https://travis-ci.org/chrisonntag/mmetering-cli.svg?branch=master
-   :target: https://travis-ci.org/chrisonntag/mmetering-cli
+.. image:: https://travis-ci.org/mmetering/mmetering-cli.svg?branch=master
+   :target: https://travis-ci.org/mmetering/mmetering-cli
 
 This is a simple CLI tool used for shortening long commands around `mmetering-server`_.
 
