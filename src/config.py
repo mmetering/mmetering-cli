@@ -1,5 +1,6 @@
 import os
-import ConfigParser as configparser
+import configparser as configparser
+
 
 class Config(object):
     def __init__(self):
@@ -35,6 +36,6 @@ class Config(object):
         try:
             return self.config.get(section, name)
         except configparser.NoOptionError:
-            print 'No %s specified in %s' % (name, self.configfile)
-            print 'Try \'mmetering-cli setup\''
+            print('No %s specified in %s' % (name, self.configfile))
+            print('Try \'mmetering-cli setup\'')
 
