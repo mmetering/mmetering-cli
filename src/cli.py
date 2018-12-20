@@ -61,18 +61,19 @@ def setenv(config, container, all, env):
     env_list = ["export " + var for var in env.split(',')]
     env_string = ''.join(exp + ' && ' for exp in env_list)[:-4]  # Remove last for chars ' && '
 
+    # TODO: Docker container doesn't hold ENV's forever
     if all:
         mmetering_container = shell.execute(['docker', 'ps', '--filter', 'name=mmetering_', '--format', '{{.ID}}'])
         mmetering_container = [container_id.decode("utf-8").replace('\n', '') for container_id in mmetering_container]
 
         for container_id in mmetering_container:
             command = get_docker_bash(container_id)
-            command.extend(['-c', '"' + env_string + '"'])
+            command.extend(['-c', env_string])
             shell.execute(command)
     else:
         if container is not None:
             command = get_docker_bash(container)
-            command.extend(['-c', '"' + env_string + '"'])
+            command.extend(['-c', env_string])
             shell.execute(command)
         else:
             click.echo('Please specifiy a container.')
@@ -94,5 +95,5 @@ def mmetering(config, version):
 
 def printout(output_file, *args, **kwargs):
     for line in output_file:
-        click.echo(kwargs.get('char', '') + line.replace('\n', ''))
+        click.echo(kwargs.get('char', '') + line.decode('utf-8').replace('\n', ''))
 

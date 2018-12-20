@@ -13,6 +13,6 @@ class Shell:
         os.environ.update(env)
 
     def execute(self, commands):
-        output = subprocess.Popen(commands, cwd=self.wdir, stdout=subprocess.PIPE)
+        output = subprocess.Popen(commands, cwd=self.wdir, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
         return output.stdout
 
