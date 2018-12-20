@@ -2,6 +2,12 @@
 env/
 ENV/
 
+# PyCharm
+.idea/
+
+build/
+dist/
+
 *.sw[a-z]
 *.py[cox]
 *.egg-info/
